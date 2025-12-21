@@ -6,7 +6,7 @@
 /*   By: lgervet <42@leogervet.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:14:29 by lgervet           #+#    #+#             */
-/*   Updated: 2025/12/07 11:38:41 by lgervet          ###   ########.fr       */
+/*   Updated: 2025/12/16 16:28:26 by lgervet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,13 +148,15 @@ char	*get_next_line(int fd)
 	s = &stash[fd];
 	buffer = init_stash_buffers(s);
 	if (!buffer)
-		return (NULL);
+		return (free(s->buf), s->buf = NULL, NULL);
 	n = 1;
 	while (n > 0 && !ft_strchr(s->buf, '\n'))
 		n = read_loop(fd, buffer, s);
 	if (n < 0 || (n == 0 && s->len == 0))
 		return (free(buffer), free(s->buf), s->buf = NULL, NULL);
 	line = extract_line(s);
+	if (!line)
+		return (free(buffer), free(s->buf), s->buf = NULL, NULL);
 	if (n == 0 && s->len == 0)
 		return (free(buffer), free(s->buf), s->buf = NULL, line);
 	return (free(buffer), line);
